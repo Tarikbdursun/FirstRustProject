@@ -1,4 +1,4 @@
-use actix_web::{http::Error, App, HttpServer};
+use actix_web::{App, HttpServer, web::Data};
 
 mod routes;
 use routes::*;
@@ -6,7 +6,7 @@ use routes::*;
 mod database;
 use database::*;
 
-#[tokio::main] //Result<Pool<MySql>, Error>
+#[tokio::main] 
 async fn main() ->std::io::Result<()> 
 {
     let database = database_connection()
@@ -15,12 +15,16 @@ async fn main() ->std::io::Result<()>
 
     println!("Database connection established");
 
-    let server=HttpServer::new(move || 
-    App::new()
-        .app_data(database.clone())
-        .service(home)
-        .service(hello_user)
-        .service(create_new_user))
+    let server=HttpServer::new(move ||
+        { 
+            App::new()
+                .app_data(Data::new(database.clone()))
+                .service(home)
+                .service(hello_user)
+                .service(create_new_user)
+                .service(create_new_todo)
+                .service(get_all_todos)
+        })
         .bind(("127.0.0.1",8000))?
         .run();
 
