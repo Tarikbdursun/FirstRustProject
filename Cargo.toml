@@ -6,4 +6,5 @@ edition = "2021"
 [dependencies]
 actix-web = "4.9.0"
 serde = {version = "1.0.152", features=["derive"]}
-tokio = {version = "*", features = ["macros", "rt-multi-thread"]}
+tokio = {version = "1.24.2", features = ["macros", "rt-multi-thread"]}
+sqlx = {version = "*", features = ["mysql", "runtime-tokio-native-tls"]}
