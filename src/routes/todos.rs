@@ -26,6 +26,72 @@ pub struct TypeDbError{
     error: String
 }
 
+#[derive(Deserialize)]
+pub struct Id {
+    id : i32,
+}
+
+#[post("/todo/mark/completed")]
+pub async fn mark_todo_completed(id: Json<Id>, db:Data<MySqlPool>) -> impl Responder{
+    let res = sqlx::query("UPDATE todos
+                                                        SET status =?
+                                                        WHERE id =?")
+    .bind("Completed")
+    .bind(&id.id)
+    .execute(&**db)
+    .await;
+
+    match res {
+        Ok(_) => HttpResponse::Ok(),
+        Err(_) => HttpResponse::InternalServerError(),
+    }
+}
+
+
+#[derive(Deserialize)]
+pub struct UpdateDescriptionStruct{
+    id : i32,
+    description : String
+}
+
+#[post("/todo/description/update")]
+pub async fn update_todo_description(body: Json<UpdateDescriptionStruct>, db:Data<MySqlPool>) -> impl Responder{
+    let res = sqlx::query("UPDATE todos
+                                                        SET description =?
+                                                        WHERE id =?")
+    .bind(&body.description)
+    .bind(&body.id)
+    .execute(&**db)
+    .await;
+
+    match res {
+        Ok(_) => HttpResponse::Ok(),
+        Err(_) => HttpResponse::InternalServerError(),
+    }
+}
+
+#[derive(Deserialize)]
+pub struct UpdateTitleStruct{
+    id : i32,
+    title : String
+}
+
+#[post("/todo/title/update")]
+pub async fn update_todo_title(body: Json<UpdateTitleStruct>, db:Data<MySqlPool>) -> impl Responder{
+    let res = sqlx::query("UPDATE todos
+                                                        SET title =?
+                                                        WHERE id =?")
+    .bind(&body.title)
+    .bind(&body.id)
+    .execute(&**db)
+    .await;
+
+    match res {
+        Ok(_) => HttpResponse::Ok(),
+        Err(_) => HttpResponse::InternalServerError(),
+    }
+}
+
 #[post("/todo/create")]
 pub async fn create_new_todo(db:Data<MySqlPool>, body: Json<CreateNewTodo>) ->impl Responder{
     let response = sqlx::query

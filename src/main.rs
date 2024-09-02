@@ -24,6 +24,9 @@ async fn main() ->std::io::Result<()>
                 .service(create_new_user)
                 .service(create_new_todo)
                 .service(get_all_todos)
+                .service(update_todo_title)
+                .service(update_todo_description)
+                .service(mark_todo_completed)
         })
         .bind(("127.0.0.1",8000))?
         .run();
